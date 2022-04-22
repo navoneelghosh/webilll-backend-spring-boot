@@ -10,8 +10,13 @@ public class Constants {
     private int FRIENDSHIP_EXISTS = 409;
     private int USERNOTFOUND = 404;
     private int BADREQUEST = 400;
+    private String VERYFI_ENV_URL = "https://api.veryfi.com/";
 
     public Constants() {
+    }
+
+    public String getVERYFIENVURL() {
+        return VERYFI_ENV_URL;
     }
 
     public int getSUCCESS() {

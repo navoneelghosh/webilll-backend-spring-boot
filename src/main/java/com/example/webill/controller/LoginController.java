@@ -17,7 +17,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/hello",method = RequestMethod.GET)
+    @RequestMapping(value = "/health",method = RequestMethod.GET)
     public String hello(){
         System.out.println("inside hello");
         return "hello world";
