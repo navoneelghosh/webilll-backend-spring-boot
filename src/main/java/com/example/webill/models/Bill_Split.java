@@ -1,14 +1,14 @@
 package com.example.webill.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "bill_split")
 public class Bill_Split {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int bill_split_id;
     private int billId;
     private String usernameFrom;
     private String usernameTo;
@@ -18,12 +18,21 @@ public class Bill_Split {
     public Bill_Split() {
     }
 
-    public Bill_Split(int billId, String usernameFrom, String usernameTo, double amount, String isSettled) {
+    public Bill_Split(int bill_split_id, int billId, String usernameFrom, String usernameTo, double amount, String isSettled) {
+        this.bill_split_id = bill_split_id;
         this.billId = billId;
         this.usernameFrom = usernameFrom;
         this.usernameTo = usernameTo;
         this.amount = amount;
         this.isSettled = isSettled;
+    }
+
+    public int getBill_split_id() {
+        return bill_split_id;
+    }
+
+    public void setBill_split_id(int bill_split_id) {
+        this.bill_split_id = bill_split_id;
     }
 
     public int getBillId() {
