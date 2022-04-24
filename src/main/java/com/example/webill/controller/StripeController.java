@@ -42,7 +42,7 @@ public class StripeController {
         Users userFromDb = userService.get(user.getUsername());
 
         //get account id and customer id from stripe
-        String[] accountDetails = stripeService.createAccount(user);
+        String[] accountDetails = stripeService.createAccount(userFromDb);
         if(accountDetails.length!=2){
             CustomResponse customResponse = new CustomResponse(400,"unable to fetch account details from stripe");
             return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
