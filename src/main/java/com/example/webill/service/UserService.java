@@ -1,7 +1,9 @@
 package com.example.webill.service;
 
+import com.example.webill.models.UserStripeAccount;
 import com.example.webill.models.Users;
 import com.example.webill.repository.UserRepository;
+import com.example.webill.repository.UserStripeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserStripeRepository userStripeRepository;
 
     public List<Users> listAll(){
         return userRepository.findAll();
@@ -36,6 +41,15 @@ public class UserService {
 
     public void delete(String username){
         userRepository.deleteById(username);
+    }
+
+    public void addStripeDetails(UserStripeAccount userStripeAccount){
+        boolean accountExists = userStripeRepository.existsById(userStripeAccount.getUsername());
+        if(accountExists)
+            return;
+        else{
+            userStripeRepository.addStripeDetails(userStripeAccount.getUsername(), userStripeAccount.getAccount_id(), userStripeAccount.getCustomer_id());
+        }
     }
 
 }
