@@ -3,14 +3,12 @@ package com.example.webill.controller;
 import com.example.webill.models.Constants;
 import com.example.webill.models.CustomResponse;
 import com.example.webill.models.Friend;
+import com.example.webill.models.UserBalance;
 import com.example.webill.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/friend")
@@ -39,23 +37,38 @@ public class FriendController {
             case 200 :
                 customResponse.setStatus(HttpStatus.OK.value());
                 customResponse.setMessage("Successfully added friend");
-                break;
+                return new ResponseEntity<>(customResponse,HttpStatus.OK);
             case 400 :
                 customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
                 customResponse.setMessage("Bad request, request body fields cannot be empty or same");
-                break;
+                return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
+
             case 404 :
                 customResponse.setStatus(HttpStatus.NOT_FOUND.value());
                 customResponse.setMessage("User or friend profile not found, sign up.");
-                break;
+                return new ResponseEntity<>(customResponse,HttpStatus.NOT_FOUND);
+
             case 409 :
                 customResponse.setStatus(HttpStatus.CONFLICT.value());
                 customResponse.setMessage("Friendship already exists");
-                break;
+                return new ResponseEntity<>(customResponse,HttpStatus.CONFLICT);
+
             default:
                 customResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 customResponse.setMessage("Error adding friend");
+                return new ResponseEntity<>(customResponse,HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(customResponse,HttpStatus.OK);
+        //return new ResponseEntity<>(customResponse,customResponse.getStatus());
+    }
+
+    //get total balance for user
+    @GetMapping(value = "/getBalance")
+    public ResponseEntity<?> getBalance(@RequestParam(name = "username")String username){
+        Object responseObj = friendService.getBalance(username);
+        if(responseObj instanceof UserBalance){
+            return new ResponseEntity<>(responseObj,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseObj,HttpStatus.NOT_FOUND);
+        }
     }
 }
