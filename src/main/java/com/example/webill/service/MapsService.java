@@ -5,7 +5,13 @@ import com.example.webill.models.Maps;
 import com.example.webill.repository.MapsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
+
+@Service
+@Transactional
 public class MapsService {
 
     @Autowired
@@ -14,8 +20,8 @@ public class MapsService {
     @Autowired
     private Constants constants;
 
-    public Maps getExpenseLocation(){
-        return mapsRepository.getExpenseLocation();
+    public List<Maps> getExpenseLocation(String username){
+        return mapsRepository.getExpenseLocation(username);
     }
     
 }
