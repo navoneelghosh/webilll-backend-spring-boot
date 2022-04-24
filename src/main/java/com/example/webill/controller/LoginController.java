@@ -52,23 +52,34 @@ public class LoginController {
 
     @PostMapping(value = "/register")
     public ResponseEntity<?> registerUser(@RequestBody Users user){
+        CustomResponse customResponse = new CustomResponse();
         if(user.getUsername()==null || user.getUsername().isEmpty()){
-            return new ResponseEntity<>("username cannot be null",HttpStatus.BAD_REQUEST);
+            customResponse.setMessage("username cannot be null");
+            customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
         }
         try {
             Users existingUser = userService.get(user.getUsername());
             if(existingUser!=null){
-                return new ResponseEntity<>("User already exists", HttpStatus.FORBIDDEN);
+                customResponse.setMessage("User already exists");
+                customResponse.setStatus(HttpStatus.FORBIDDEN.value());
+                return new ResponseEntity<>(customResponse, HttpStatus.FORBIDDEN);
             }
         }catch(Exception e){
             try{
                 if((user.getEmail()==null || user.getEmail().isEmpty()) || (user.getPassword()==null || user.getPassword().isEmpty())){
-                    return new ResponseEntity<>("email cannot be empty",HttpStatus.BAD_REQUEST);
+                    customResponse.setMessage("email cannot be empty");
+                    customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+                    return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
                 }
                 userService.registerUser(user);
-                return new ResponseEntity<>("User successfully registered",HttpStatus.OK);
+                customResponse.setMessage("User successfully registered");
+                customResponse.setStatus(HttpStatus.OK.value());
+                return new ResponseEntity<>(customResponse,HttpStatus.OK);
             }catch (Exception e1){
-                return new ResponseEntity<>("Could not register user",HttpStatus.BAD_REQUEST);
+                customResponse.setMessage("Could not register user");
+                customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+                return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
             }
         }
         return null;

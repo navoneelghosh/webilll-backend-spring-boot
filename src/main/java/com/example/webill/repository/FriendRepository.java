@@ -10,10 +10,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend,String> {
 
-    @Query(value = "select count(*) from friends_prod where friendshipKey = :friendshipkey",nativeQuery = true)
-    int checkExistingFriendship(@Param("friendshipkey")String friendshipkey);
-
     @Modifying
     @Query(value = "insert into friends_prod (username1,username2,friendshipKey) values (:username1,:username2,:friendshipKey)",nativeQuery = true)
     void addFriendship(@Param("username1")String username1,@Param("username2") String username2,@Param("friendshipKey")String friendshipKey);
+
+    @Query(value = "select sum(amount) from bill_split where usernameTo = :username",nativeQuery = true)
+    double getAmountOwedForUser(@Param("username")String username);
+
+    @Query(value = "select sum(amount) from bill_split where usernameFrom = :username",nativeQuery = true)
+    double getAmountToPay(@Param("username")String username);
+
+    @Query(value = "select count(*) from friends_prod where friendshipKey = :friendshipKey",nativeQuery = true)
+    int checkFriendshipExists(@Param("friendshipKey")String friendshipKey);
 }
