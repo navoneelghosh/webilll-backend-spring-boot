@@ -1,10 +1,10 @@
 package com.example.webill.service;
 
-import com.example.webill.models.Constants;
-import com.example.webill.models.Friend;
-import com.example.webill.models.Users;
+import com.example.webill.models.*;
 import com.example.webill.repository.FriendRepository;
+import com.example.webill.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,36 +21,60 @@ public class FriendService {
     private FriendRepository friendRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private Constants constants;
+
+
+    public Object getBalance(String username){
+        CustomResponse customResponse = new CustomResponse();
+        UserBalance userBalance = new UserBalance();
+
+        //check if user exists
+        boolean userExists = userRepository.existsById(username);
+        if(userExists){
+            double amountOwed=0,amountToPay=0;
+            //get amount owed
+            amountOwed = friendRepository.getAmountOwedForUser(username);
+            amountToPay = friendRepository.getAmountToPay(username);
+
+            userBalance.setAmountOwed(amountOwed);
+            userBalance.setAmountToPay(amountToPay);
+
+            return userBalance;
+
+        }else{
+            customResponse.setMessage("User does not exist");
+            customResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return customResponse;
+        }
+    }
 
     public int addFriend(Friend friend) {
         Users user;
         Users friend1;
-        if(checkFriendRequestBody(friend)){
+        if(checkFriendRequestBody(friend)) {
             //check if user and friend exist
-            try{
-                user = userService.get(friend.getUsername1());
-                friend1 = userService.get(friend.getUsername2());
-            }catch (Exception e){
-                return constants.getUSERNOTFOUND();
-            }
+            boolean userExists = userRepository.existsById(friend.getUsername1());
+            boolean friendExists = userRepository.existsById(friend.getUsername2());
 
-            if(user!=null && friend1!=null){
-                //1.create friendship key
-                String friendshipkey = createFriendshipKey(user.getUsername(),friend1.getUsername());
-                //2.add friendship to table
-                friend.setFriendshipKey(friendshipkey);
-                int count = friendRepository.checkExistingFriendship(friendshipkey);
-                if(count==0)
-                    friendRepository.addFriendship(user.getUsername(), friend1.getUsername(),friendshipkey);
-                else{
-                    //friendship exists
-                    return constants.getFRIENDSHIP_EXISTS();
-                }
-            }else{
-                //user not found or friend not found
+            if (!userExists || !friendExists)
                 return constants.getUSERNOTFOUND();
-            }
+
+            user = userRepository.getUserById(friend.getUsername1());
+            friend1 = userRepository.getUserById(friend.getUsername2());
+
+            String friendshipKey = createFriendshipKey(user.getUsername(), friend1.getUsername());
+            friend.setFriendshipKey(friendshipKey);
+
+            boolean friendshipExists = (friendRepository.checkFriendshipExists(friendshipKey)>0)? true : false;
+
+            if (!friendshipExists)
+                friendRepository.addFriendship(user.getUsername(), friend1.getUsername(), friendshipKey);
+            else
+                return constants.getFRIENDSHIP_EXISTS();
+
         }else{
             return constants.getBADREQUEST();
         }

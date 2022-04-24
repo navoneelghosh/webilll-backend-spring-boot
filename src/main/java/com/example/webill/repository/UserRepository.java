@@ -16,4 +16,7 @@ public interface UserRepository extends JpaRepository<Users,String> {
     void registerUser(@Param("username") String username, @Param("email") String email,
                     @Param("password") String password, @Param("phone") String phone,@Param("address") String address,@Param("gender") String gender);
 
+    @Query(value = "select * from users_prod where username = :username",nativeQuery = true)
+    Users getUserById(@Param("username")String username);
+
 }
