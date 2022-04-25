@@ -13,8 +13,16 @@ import java.util.Map;
 @Repository
 public interface MapsRepository extends JpaRepository<Maps,Integer> {
     
-    @Query(value = "select expense_id, location_name, sum(amount) as total_expense, count(amount) as visits, latitude, longitude "+
-                   "from temp_expenses where user_name = :username group by latitude, longitude ",nativeQuery = true)
+    @Query(value = "SELECT bp.billId as expense_id, bp.billName as location_name, \n" +
+            "CASE \n" +
+            "WHEN bs.usernameFrom = :username THEN SUM(bs.amount) \n" +
+            "WHEN bs.usernameTo = :username THEN (bp.totalAmount - SUM(bs.amount))\n" +
+            "END as total_expense,\n" +
+            "COUNT(DISTINCT bp.billId) as visits, bp.latitude, bp.longitude\n" +
+            "FROM WeBillDB.bills_prod as bp JOIN WeBillDB.bill_split bs \n" +
+            "ON bp.billId = bs.billId\n" +
+            "WHERE bs.usernameFrom = :username OR bs.usernameTo = :username \n" +
+            "group by bp.latitude, bp.longitude;",nativeQuery = true)
     List<Maps> getExpenseLocation(@Param("username")String username);
 
 }
