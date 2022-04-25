@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -25,6 +27,60 @@ public class FriendService {
 
     @Autowired
     private Constants constants;
+
+    public List<FriendBreakdown> getFriendsBreakdown(String username){
+        List<FriendBreakdown> friendBreakdowns = new ArrayList<>();
+        boolean userExists = userRepository.existsById(username);
+        if(userExists){
+            //1. get list of friends for user
+            List<String> friends = getFriends(username);
+            if(friends.size()>0){
+                for(String friend : friends){
+                    double[] amounts = getAmountsBreakdown(username,friend);
+                    FriendBreakdown friendBreakdown = new FriendBreakdown(friend,amounts[0],amounts[1]);
+                    friendBreakdowns.add(friendBreakdown);
+                }
+            }
+        }
+
+        return friendBreakdowns;
+    }
+
+    private List<String> getFriends(String username){
+        List<String> friends = new ArrayList<>();
+        List<String> keys = friendRepository.getFriendshipKeys(username);
+
+        if(keys.size()>0){
+            for(String key : keys){
+                String[] entities = key.split("-");
+                if(entities[0].equalsIgnoreCase(username))
+                    friends.add(entities[2]);
+                else
+                    friends.add(entities[0]);
+            }
+        }
+
+        return friends;
+    }
+
+    private double[] getAmountsBreakdown(String username,String friend){
+        double amountOwed = 0.0,amountToPay = 0.0;
+        try{
+            amountOwed = friendRepository.getAmountOwedByFriend(username,friend);
+        }catch (Exception e){
+            //do nothing
+        }
+
+        try{
+            amountToPay = friendRepository.getAmountToPayToFriend(username,friend);
+        }catch (Exception e){
+            //do nothing
+        }
+
+        return new double[]{amountOwed,amountToPay};
+    }
+
+
 
 
     public Object getBalance(String username){

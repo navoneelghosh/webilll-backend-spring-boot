@@ -1,14 +1,13 @@
 package com.example.webill.controller;
 
-import com.example.webill.models.Constants;
-import com.example.webill.models.CustomResponse;
-import com.example.webill.models.Friend;
-import com.example.webill.models.UserBalance;
+import com.example.webill.models.*;
 import com.example.webill.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/friend")
@@ -70,5 +69,17 @@ public class FriendController {
         }else{
             return new ResponseEntity<>(responseObj,HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "/getFriendsBreakdown")
+    public ResponseEntity<?> getFriendsBreakdown(@RequestParam(name = "username")String username){
+        List<FriendBreakdown> friendBreakdownList = friendService.getFriendsBreakdown(username);
+        if(friendBreakdownList.size()==0){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setMessage("No friends expenses found");
+            customResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(customResponse,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(friendBreakdownList,HttpStatus.OK);
     }
 }
