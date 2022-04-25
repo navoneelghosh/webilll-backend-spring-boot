@@ -36,9 +36,16 @@ public class FriendService {
         if(userExists){
             double amountOwed=0,amountToPay=0;
             //get amount owed
-            amountOwed = friendRepository.getAmountOwedForUser(username);
-            amountToPay = friendRepository.getAmountToPay(username);
-
+            try{
+                amountOwed = friendRepository.getAmountOwedForUser(username);
+            }catch (Exception e){
+                amountOwed = 0.0;
+            }
+            try{
+                amountToPay = friendRepository.getAmountToPay(username);
+            }catch (Exception e){
+                amountToPay = 0.0;
+            }
             userBalance.setAmountOwed(amountOwed);
             userBalance.setAmountToPay(amountToPay);
 
