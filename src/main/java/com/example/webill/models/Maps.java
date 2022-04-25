@@ -5,8 +5,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "temp_expenses")
 public class Maps {
+
     @Id
     private int expense_id;
     private String location_name;
@@ -18,13 +18,13 @@ public class Maps {
     public Maps() {
     }
 
-    public Maps(int expense_id, String location_name, double total_expense, int visits, double latitude, double longitude) {
+    public Maps(int expense_id, String location_name, double total_expense, int visits, String latitude, String longitude) {
         this.expense_id = expense_id;
         this.location_name = location_name;
         this.total_expense = total_expense;
         this.visits = visits;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.latitude = Double.parseDouble(latitude);
+        this.longitude = Double.parseDouble(longitude);
     }
 
     public int getExpense_id() {
@@ -36,7 +36,7 @@ public class Maps {
     }
 
     public String getLocation_name() {
-        return this.location_name;
+        return location_name;
     }
 
     public void setLocation_name(String location_name) {
@@ -44,7 +44,7 @@ public class Maps {
     }
 
     public double getTotal_expense() {
-        return this.total_expense;
+        return total_expense;
     }
 
     public void setTotal_expense(double total_expense) {
@@ -52,7 +52,7 @@ public class Maps {
     }
 
     public int getVisits() {
-        return this.visits;
+        return visits;
     }
 
     public void setVisits(int visits) {
@@ -60,7 +60,7 @@ public class Maps {
     }
 
     public double getLatitude() {
-        return this.latitude;
+        return latitude;
     }
 
     public void setLatitude(double latitude) {
@@ -68,11 +68,10 @@ public class Maps {
     }
 
     public double getLongitude() {
-        return this.longitude;
+        return longitude;
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-
 }
