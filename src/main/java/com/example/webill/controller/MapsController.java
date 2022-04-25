@@ -21,9 +21,10 @@ public class MapsController {
     @Autowired
     private Constants constants;
 
-    @GetMapping(value = "/mapsData")
-    public ResponseEntity<?> getExpenseLocation(@RequestParam(name = "username")String username){
-        
+    @PostMapping(value = "/mapsData")
+    public ResponseEntity<?> getExpenseLocation(@RequestBody String username){
+
+        System.out.println("USERNAME: "+username);
         List<Maps> mapsResponse = mapsService.getExpenseLocation(username);
 
         return new ResponseEntity<>(mapsResponse,HttpStatus.OK);
