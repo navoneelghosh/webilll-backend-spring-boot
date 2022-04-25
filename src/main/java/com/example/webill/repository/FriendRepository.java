@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FriendRepository extends JpaRepository<Friend,String> {
 
@@ -22,4 +24,14 @@ public interface FriendRepository extends JpaRepository<Friend,String> {
 
     @Query(value = "select count(*) from friends_prod where friendshipKey = :friendshipKey",nativeQuery = true)
     int checkFriendshipExists(@Param("friendshipKey")String friendshipKey);
+
+    @Query(value = "select friendshipkey from friends_prod where username1=:username or username2=:username",nativeQuery = true)
+    List<String> getFriendshipKeys(@Param("username")String username);
+
+    @Query(value = "select sum(amount) from bill_split where usernameFrom=:friend and usernameTo=:username",nativeQuery = true)
+    double getAmountOwedByFriend(@Param("username")String username,@Param("friend")String friend);
+
+    @Query(value = "select sum(amount) from bill_split where usernameFrom=:username and usernameTo=:friend",nativeQuery = true)
+    double getAmountToPayToFriend(@Param("username")String username,@Param("friend")String friend);
+
 }
