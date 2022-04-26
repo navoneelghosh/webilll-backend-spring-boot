@@ -1,8 +1,8 @@
 package com.example.webill.service;
 
-import com.example.webill.models.Constants;
-import com.example.webill.models.OCRBill;
-import com.example.webill.models.VeryfiOCRResponse;
+import com.example.webill.models.*;
+import com.example.webill.repository.BillRepository;
+import com.example.webill.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import org.json.simple.JSONObject;
 
 @Service
@@ -20,6 +23,12 @@ public class BillService {
 
     @Autowired
     private Constants constants;
+
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${veryfi.client_id}")
     private String veryfiCliendId;
@@ -51,5 +60,22 @@ public class BillService {
 
         VeryfiOCRResponse veryfiOCRResponse = new ObjectMapper().readValue(str,VeryfiOCRResponse.class);
         return veryfiOCRResponse;
+    }
+
+    public List<BillModel> getBillsForUser(String username){
+        List<BillModel> bills = new ArrayList<>();
+        List<Integer> billids = userRepository.getBillIdsForUser(username);
+        if(billids.size()==0){
+            return bills;
+        }else{
+            for(Integer billId : billids){
+                BillModel billModel = billRepository.getBillById(billId);
+                if(billModel==null)continue;
+                bills.add(billModel);
+            }
+
+            return bills;
+
+        }
     }
 }

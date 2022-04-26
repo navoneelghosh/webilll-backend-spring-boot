@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface UserRepository extends JpaRepository<Users,String> {
 
     @Modifying
@@ -18,5 +20,10 @@ public interface UserRepository extends JpaRepository<Users,String> {
 
     @Query(value = "select * from users_prod where username = :username",nativeQuery = true)
     Users getUserById(@Param("username")String username);
+
+   @Query(value = "select distinct bill_split.billId from bill_split where usernameFrom = :username or usernameTo=:username ;",nativeQuery = true)
+   List<Integer> getBillIdsForUser(@Param("username")String username);
+
+
 
 }
