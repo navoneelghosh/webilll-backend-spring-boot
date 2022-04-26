@@ -1,16 +1,15 @@
 package com.example.webill.controller;
 
-import com.example.webill.models.CustomResponse;
-import com.example.webill.models.OCRBill;
-import com.example.webill.models.VeryfiOCRResponse;
+import com.example.webill.models.*;
 import com.example.webill.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/bill")
@@ -28,5 +27,19 @@ public class BillController {
             CustomResponse customResponse = new CustomResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage());
             return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/getBillsForUser")
+    public ResponseEntity<?> getBillsForUser(@RequestParam(name = "username")String username){
+        if(username==null || username.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        List<BillModel> bills = new ArrayList<>();
+        try{
+            bills = billService.getBillsForUser(username);
+        }catch (Exception e){
+            bills = new ArrayList<>();
+        }
+
+        return new ResponseEntity<>(bills,HttpStatus.OK);
     }
 }

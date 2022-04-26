@@ -2,6 +2,7 @@ package com.example.webill.controller;
 
 import com.example.webill.models.Constants;
 import com.example.webill.models.Maps;
+import com.example.webill.models.Users;
 import com.example.webill.service.MapsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class MapsController {
     private Constants constants;
 
     @PostMapping(value = "/mapsData")
-    public ResponseEntity<?> getExpenseLocation(@RequestBody String username){
-
+    public ResponseEntity<?> getExpenseLocation(@RequestBody Users user){
+        String username = user.getUsername();
         System.out.println("USERNAME: "+username);
         List<Maps> mapsResponse = mapsService.getExpenseLocation(username);
 
