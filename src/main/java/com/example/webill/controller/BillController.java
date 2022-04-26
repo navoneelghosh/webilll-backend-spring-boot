@@ -42,4 +42,22 @@ public class BillController {
 
         return new ResponseEntity<>(bills,HttpStatus.OK);
     }
+
+    @PostMapping(value = "/getBillsForUserByLoc")
+    public ResponseEntity<?> getBillsForUserByLoc(@RequestBody BillsByLocRequest billsByLocRequest){
+        String username = billsByLocRequest.getUsername();
+        String latitude = Double.toString(billsByLocRequest.getLatitude());
+        String longitude = Double.toString(billsByLocRequest.getLongitude());
+        String dateString = billsByLocRequest.getDateString();
+        if(username==null || username.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        List<Bills_Prod> bills = new ArrayList<>();
+        try{
+            bills = billService.getBillsForUserByLoc(username,latitude,longitude,dateString);
+        }catch (Exception e){
+            bills = new ArrayList<>();
+        }
+
+        return new ResponseEntity<>(bills,HttpStatus.OK);
+    }
 }
