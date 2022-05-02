@@ -3,6 +3,7 @@ package com.example.webill.service;
 import com.example.webill.models.*;
 import com.example.webill.repository.BillLocRepository;
 import com.example.webill.repository.BillRepository;
+import com.example.webill.repository.SplitBillRepository;
 import com.example.webill.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 
@@ -34,6 +36,9 @@ public class BillService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SplitBillRepository splitBillRepository;
 
     @Value("${veryfi.client_id}")
     private String veryfiCliendId;
@@ -101,5 +106,49 @@ public class BillService {
 
         }
 
+    }
+
+    public void splitBill(int billId, SplitBillRequest splitBillRequest){
+        String usernameTo = splitBillRequest.getPaid_by();
+        Map<String,Double> splitMap = splitBillRequest.getSplitMap();
+        String usernameFrom;
+        double amount;
+        for(Map.Entry<String,Double> splitEntry : splitMap.entrySet()) {
+            usernameFrom = splitEntry.getKey();
+            amount = splitEntry.getValue();
+            splitBillRepository.addBillSplit(billId,usernameFrom,usernameTo,amount);
+        }
+    }
+
+    public int putSplitBill(SplitBillRequest splitBillRequest){
+        String username = splitBillRequest.getUsername();
+        String billname = splitBillRequest.getBillname();
+        double totalamount = splitBillRequest.getTotalamount();
+        String date = splitBillRequest.getDate();
+        String paid_by = splitBillRequest.getPaid_by();
+        String latitude = splitBillRequest.getLatitude();
+        String longitude = splitBillRequest.getLongitude();
+//        Map<String,Double> splitMap = splitBillRequest.getSplitMap();
+        List<Integer> billId;
+
+        try {
+            billRepository.addBill(billname,totalamount,date,paid_by,latitude,longitude);
+        } catch (Exception e){
+            return constants.getBADREQUEST();
+        }
+
+        try {
+            billId = billRepository.getLastAddedBillId(billname,totalamount,date,paid_by,latitude,longitude);
+        } catch (Exception e){
+            return constants.getUSERNOTFOUND();
+        }
+
+        try {
+            System.out.println("=======================BILL ID===================="+billId.get(0));
+            splitBill(billId.get(0), splitBillRequest);
+        } catch (Exception e){
+            return constants.getBADREQUEST();
+        }
+        return constants.getSUCCESS();
     }
 }
