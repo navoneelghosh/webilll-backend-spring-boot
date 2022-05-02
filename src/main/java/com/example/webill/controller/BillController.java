@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/bill")
@@ -59,5 +60,38 @@ public class BillController {
         }
 
         return new ResponseEntity<>(bills,HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/addSplitBill")
+    public ResponseEntity<CustomResponse> putSplitBill(@RequestBody SplitBillRequest splitBillRequest){
+
+        CustomResponse customResponse = new CustomResponse();
+        int responseCode = billService.putSplitBill(splitBillRequest);
+        switch (responseCode){
+            case 200 :
+                customResponse.setStatus(HttpStatus.OK.value());
+                customResponse.setMessage("Successfully added friend");
+                return new ResponseEntity<>(customResponse,HttpStatus.OK);
+            case 400 :
+                customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+                customResponse.setMessage("Bad request, request body fields cannot be empty or same");
+                return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
+
+            case 404 :
+                customResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                customResponse.setMessage("User or friend profile not found, sign up.");
+                return new ResponseEntity<>(customResponse,HttpStatus.NOT_FOUND);
+
+            case 409 :
+                customResponse.setStatus(HttpStatus.CONFLICT.value());
+                customResponse.setMessage("Friendship already exists");
+                return new ResponseEntity<>(customResponse,HttpStatus.CONFLICT);
+
+            default:
+                customResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                customResponse.setMessage("Error adding friend");
+                return new ResponseEntity<>(customResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
