@@ -37,8 +37,8 @@ public class BillService {
     @Autowired
     private BillRepository billRepository;
 
-    @Autowired
-    private BillLocRepository billLocRepository;
+//    @Autowired
+//    private BillLocRepository billLocRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -124,15 +124,15 @@ public class BillService {
         }
     }
 
-    public List<Bills_Prod> getBillsForUserByLoc(String username, String latitude, String longitude, String dateString) {
+    public List<BillModel> getBillsForUserByLoc(String username, String latitude, String longitude, String dateString) {
 
-        ArrayList<Bills_Prod> bills = new ArrayList<>();
+        ArrayList<BillModel> bills = new ArrayList<>();
         List<Integer> billids = userRepository.getBillIdsForUser(username);
         if (billids.size() == 0) {
             return bills;
         } else {
             for (Integer billId : billids) {
-                Bills_Prod billModel = billLocRepository.getBillsForUserByLoc(billId,latitude,longitude);
+                BillModel billModel = billRepository.getBillsForUserByLoc(billId,latitude,longitude);
                 if (billModel == null) continue;
                 bills.add(billModel);
             }
