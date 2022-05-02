@@ -9,17 +9,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -46,13 +52,42 @@ public class BillService {
     @Value("${veryfi.api_key}")
     private String veryfiApikey;
 
+    public void processBillImage(MultipartFile file) throws IOException {
+        String clientId = "CLIENT_ID";
+        String apiKey = "apikey USERNAME:API_KEY";
+        String URL = constants.getVERYFIENVURL() + "api/v7/partner/documents/";
+        String filename = "example.png";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("CLIENT-ID", clientId);
+        headers.add("ACCEPT", "application/json");
+        headers.add("AUTHORIZATION", apiKey);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        File imgFile = new File(file.getOriginalFilename());
+        OutputStream os = new FileOutputStream(imgFile);
+        os.write(file.getBytes());
+        os.close();
+        //body.add("file", new FileSystemResource(filename));
+        //body.add("file",new FileSystemResource());
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.postForEntity(URL, requestEntity, String.class);
+            System.out.println(response.getBody());
+        } catch (HttpClientErrorException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public VeryfiOCRResponse processBill(OCRBill ocrBill) throws JsonProcessingException {
         String clientId = veryfiCliendId;
         String apiKey = veryfiApikey;
         System.out.println(clientId);
         System.out.println(apiKey);
         String URL = constants.getVERYFIENVURL() + "api/v7/partner/documents/";
-        String fileData = ocrBill.getBase64encodedString();
+        String fileData = "image"+"/"+"png;base64,"+ocrBill.getBase64encodedString();
         String fileName = ocrBill.getBillName();
         RestTemplate restTemplate = new RestTemplate();
         JSONObject requestBody = new JSONObject();

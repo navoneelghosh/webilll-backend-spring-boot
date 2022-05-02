@@ -3,10 +3,13 @@ package com.example.webill.controller;
 import com.example.webill.models.*;
 import com.example.webill.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,17 @@ public class BillController {
 
     @Autowired
     private BillService billService;
+
+    @PostMapping(value = "/processBill2",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> processBill2(@RequestBody MultipartFile file){
+        try{
+            billService.processBillImage(file);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage());
+            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping(value = "/processBill")
     public ResponseEntity<?> processBill(@RequestBody OCRBill ocrBill){

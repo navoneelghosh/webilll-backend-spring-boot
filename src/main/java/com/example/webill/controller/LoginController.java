@@ -1,5 +1,7 @@
 package com.example.webill.controller;
 
+import com.example.webill.models.ChangePassword;
+import com.example.webill.models.ChangePhone;
 import com.example.webill.models.CustomResponse;
 import com.example.webill.models.Users;
 import com.example.webill.service.UserService;
@@ -46,6 +48,34 @@ public class LoginController {
             }
         }catch (Exception e){
             return new ResponseEntity<>(new CustomResponse(HttpStatus.NOT_FOUND.value(), "user doesnt exist, please register"),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping(value = "/changePassword")
+    public ResponseEntity<CustomResponse> changePassword(@RequestBody ChangePassword changePassword){
+        if(changePassword.getUsername()==null || changePassword.getUsername().isEmpty()){
+            return new ResponseEntity<>(new CustomResponse(HttpStatus.BAD_REQUEST.value(), "Username cannot be empty"),HttpStatus.BAD_REQUEST);
+        }
+
+        CustomResponse customResponse = userService.changePassword(changePassword);
+        if(customResponse.getStatus()==HttpStatus.OK.value()){
+            return new ResponseEntity<>(customResponse,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/changePhone")
+    public ResponseEntity<CustomResponse> changePhone(@RequestBody ChangePhone changePhone){
+        if(changePhone.getUsername()==null || changePhone.getUsername().isEmpty()){
+            return new ResponseEntity<>(new CustomResponse(HttpStatus.BAD_REQUEST.value(), "Username cannot be empty"),HttpStatus.BAD_REQUEST);
+        }
+
+        CustomResponse customResponse = userService.changePhone(changePhone);
+        if(customResponse.getStatus()==HttpStatus.OK.value()){
+            return new ResponseEntity<>(customResponse,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(customResponse,HttpStatus.BAD_REQUEST);
         }
     }
 
