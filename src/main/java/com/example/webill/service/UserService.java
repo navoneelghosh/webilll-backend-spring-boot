@@ -1,10 +1,10 @@
 package com.example.webill.service;
 
-import com.example.webill.models.UserStripeAccount;
-import com.example.webill.models.Users;
+import com.example.webill.models.*;
 import com.example.webill.repository.UserRepository;
 import com.example.webill.repository.UserStripeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,6 +26,36 @@ public class UserService {
 
     public void save(Users user){
         userRepository.save(user);
+    }
+
+    public CustomResponse changePassword(ChangePassword changePassword){
+        CustomResponse customResponse = new CustomResponse();
+        int changeStatus = userRepository.changePassword(changePassword.getUsername(), changePassword.getNewPassword());
+        if(changeStatus==1){
+            customResponse.setStatus(HttpStatus.OK.value());
+            customResponse.setMessage("successfully changed password");
+        }
+        else{
+            customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            customResponse.setMessage("failed to change password");
+        }
+
+        return customResponse;
+    }
+
+    public CustomResponse changePhone(ChangePhone changePhone){
+        CustomResponse customResponse = new CustomResponse();
+        int changeStatus = userRepository.changePhone(changePhone.getUsername(), changePhone.getNewPhone());
+        if(changeStatus==1){
+            customResponse.setStatus(HttpStatus.OK.value());
+            customResponse.setMessage("successfully changed phone");
+        }
+        else{
+            customResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            customResponse.setMessage("failed to change phone");
+        }
+
+        return customResponse;
     }
 
     public void registerUser(Users user){

@@ -24,6 +24,14 @@ public interface UserRepository extends JpaRepository<Users,String> {
    @Query(value = "select distinct bill_split.billId from bill_split where usernameFrom = :username or usernameTo=:username ;",nativeQuery = true)
    List<Integer> getBillIdsForUser(@Param("username")String username);
 
+   @Modifying
+   @Query(value = "update users_prod set password = :password where username = :username",nativeQuery = true)
+   int changePassword(@Param("username")String username,@Param("password")String password);
+
+    @Modifying
+    @Query(value = "update users_prod set phone = :phone where username = :username",nativeQuery = true)
+    int changePhone(@Param("username")String username,@Param("phone")String phone);
+
 
 
 }
