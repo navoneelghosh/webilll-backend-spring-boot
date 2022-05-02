@@ -16,11 +16,11 @@ public interface BillRepository extends JpaRepository<BillModel,Integer> {
     @Query(value = "select distinct * from bills where billId = :billId limit 1",nativeQuery = true)
     BillModel getBillById(@Param("billId") Integer billId);
 
-//    @Query(value = "select * from WeBillDB.bills_prod where billId = :billId and \n"+
-//            "latitude = :latitude and longitude = :longitude",nativeQuery = true)
-//    Bills_Prod getBillsForUserByLoc(@Param("billId")Integer billId,
-//                                    @Param("latitude")String latitude,
-//                                    @Param("longitude")String longitude);
+    @Query(value = "select * from WeBillDB.bills where billId = :billId and \n"+
+            "latitude = :latitude and longitude = :longitude",nativeQuery = true)
+    BillModel getBillsForUserByLoc(@Param("billId")Integer billId,
+                                    @Param("latitude")String latitude,
+                                    @Param("longitude")String longitude);
 
     @Modifying
     @Query(value = "INSERT INTO WeBillDB.bills (\n" +

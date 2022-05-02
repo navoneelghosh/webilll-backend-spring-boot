@@ -52,7 +52,7 @@ public class BillController {
         String dateString = billsByLocRequest.getDateString();
         if(username==null || username.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        List<Bills_Prod> bills = new ArrayList<>();
+        List<BillModel> bills = new ArrayList<>();
         try{
             bills = billService.getBillsForUserByLoc(username,latitude,longitude,dateString);
         }catch (Exception e){
