@@ -52,6 +52,18 @@ public class BillService {
     @Value("${veryfi.api_key}")
     private String veryfiApikey;
 
+    public int processPayment(ProcessPaymentModel processPaymentModel){
+        int response = 0;
+        try{
+            response = billRepository.processPayment(processPaymentModel.getUsernameFrom(),processPaymentModel.getUsernameTo());
+            response = HttpStatus.OK.value();
+        }catch (Exception e){
+            response = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        }
+
+        return response;
+    }
+
     public void processBillImage(MultipartFile file) throws IOException {
         String clientId = "CLIENT_ID";
         String apiKey = "apikey USERNAME:API_KEY";

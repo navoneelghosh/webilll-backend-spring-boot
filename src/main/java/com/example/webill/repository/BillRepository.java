@@ -43,4 +43,8 @@ public interface BillRepository extends JpaRepository<BillModel,Integer> {
     List<Integer> getLastAddedBillId(@Param("billname")String billname, @Param("totalamount")double totalamount,
                          @Param("date")String date, @Param("paid_by")String paid_by,
                          @Param("latitude")String latitude, @Param("longitude")String longitude);
+
+    @Modifying
+    @Query(value = "update bill_split set isSettled = 'true' where usernameFrom = :usernameFrom and usernameTo=:usernameTo",nativeQuery = true)
+    int processPayment(@Param("usernameFrom")String usernameFrom,@Param("usernameTo")String usernameTo);
 }

@@ -76,6 +76,22 @@ public class BillController {
         return new ResponseEntity<>(bills,HttpStatus.OK);
     }
 
+    @PostMapping(value = "/processPayment")
+    public ResponseEntity<CustomResponse> processPayment(@RequestBody ProcessPaymentModel processPaymentModel){
+        CustomResponse customResponse = new CustomResponse();
+        int responseCode = billService.processPayment(processPaymentModel);
+
+        if(responseCode==HttpStatus.OK.value()){
+            customResponse.setStatus(HttpStatus.OK.value());
+            customResponse.setMessage("payment processed successfully");
+            return new ResponseEntity<>(customResponse,HttpStatus.OK);
+        }else{
+            customResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            customResponse.setMessage("could not process payment");
+            return new ResponseEntity<>(customResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(value = "/addSplitBill")
     public ResponseEntity<CustomResponse> putSplitBill(@RequestBody SplitBillRequest splitBillRequest){
 
