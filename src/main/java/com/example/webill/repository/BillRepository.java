@@ -31,7 +31,7 @@ public interface BillRepository extends JpaRepository<BillModel,Integer> {
             ":billname, :totalamount,\n" +
             ":date, :paid_by,\n" +
             ":latitude, :longitude\n" +
-            ");",nativeQuery = true)
+            ")",nativeQuery = true)
     void addBill(@Param("billname")String billname, @Param("totalamount")double totalamount,
                  @Param("date")String date, @Param("paid_by")String paid_by,
                  @Param("latitude")String latitude, @Param("longitude")String longitude);
