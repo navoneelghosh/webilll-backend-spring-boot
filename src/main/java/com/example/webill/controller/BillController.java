@@ -45,12 +45,12 @@ public class BillController {
     }
 
     @GetMapping(value = "/getBillsForUser")
-    public ResponseEntity<?> getBillsForUser(@RequestParam(name = "username")String username){
+    public ResponseEntity<?> getBillsForUser(@RequestParam(name = "username")String username,@RequestParam(name = "year")String year){
         if(username==null || username.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         List<BillModel> bills = new ArrayList<>();
         try{
-            bills = billService.getBillsForUser(username);
+            bills = billService.getBillsForUser(username,year);
         }catch (Exception e){
             bills = new ArrayList<>();
         }

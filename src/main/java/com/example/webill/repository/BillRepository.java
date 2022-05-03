@@ -13,14 +13,15 @@ import java.util.List;
 @Repository
 public interface BillRepository extends JpaRepository<BillModel,Integer> {
 
-    @Query(value = "select distinct * from bills where billId = :billId limit 1",nativeQuery = true)
-    BillModel getBillById(@Param("billId") Integer billId);
+    @Query(value = "select distinct * from bills where billId = :billId and date like :yearParam limit 1",nativeQuery = true)
+    BillModel getBillById(@Param("billId") Integer billId,@Param("yearParam") String yearParam);
 
     @Query(value = "select * from WeBillDB.bills where billId = :billId and \n"+
-            "latitude = :latitude and longitude = :longitude",nativeQuery = true)
+            "latitude = :latitude and longitude = :longitude and date like :yearParam",nativeQuery = true)
     BillModel getBillsForUserByLoc(@Param("billId")Integer billId,
                                     @Param("latitude")String latitude,
-                                    @Param("longitude")String longitude);
+                                    @Param("longitude")String longitude,
+                                   @Param("yearParam")String yearParam);
 
     @Modifying
     @Query(value = "INSERT INTO WeBillDB.bills (\n" +

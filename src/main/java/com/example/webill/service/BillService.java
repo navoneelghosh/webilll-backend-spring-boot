@@ -119,14 +119,15 @@ public class BillService {
         return veryfiOCRResponse;
     }
 
-    public List<BillModel> getBillsForUser(String username) {
+    public List<BillModel> getBillsForUser(String username, String year) {
+        String yearParam = "%"+year;
         List<BillModel> bills = new ArrayList<>();
         List<Integer> billids = userRepository.getBillIdsForUser(username);
         if (billids.size() == 0) {
             return bills;
         } else {
             for (Integer billId : billids) {
-                BillModel billModel = billRepository.getBillById(billId);
+                BillModel billModel = billRepository.getBillById(billId,yearParam);
                 if (billModel == null) continue;
                 bills.add(billModel);
             }
@@ -137,14 +138,14 @@ public class BillService {
     }
 
     public List<BillModel> getBillsForUserByLoc(String username, String latitude, String longitude, String dateString) {
-
+        String yearParam = "%"+dateString;
         ArrayList<BillModel> bills = new ArrayList<>();
         List<Integer> billids = userRepository.getBillIdsForUser(username);
         if (billids.size() == 0) {
             return bills;
         } else {
             for (Integer billId : billids) {
-                BillModel billModel = billRepository.getBillsForUserByLoc(billId,latitude,longitude);
+                BillModel billModel = billRepository.getBillsForUserByLoc(billId,latitude,longitude,yearParam);
                 if (billModel == null) continue;
                 bills.add(billModel);
             }
