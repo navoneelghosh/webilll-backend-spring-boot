@@ -1,9 +1,6 @@
 package com.example.webill.controller;
 
-import com.example.webill.models.ChangePassword;
-import com.example.webill.models.ChangePhone;
-import com.example.webill.models.CustomResponse;
-import com.example.webill.models.Users;
+import com.example.webill.models.*;
 import com.example.webill.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -113,6 +110,13 @@ public class LoginController {
             }
         }
         return null;
+    }
+
+    @GetMapping(value = "/getPhone")
+    public ResponseEntity<?> getPhone(@RequestParam(name = "username")String username){
+        Users user = userService.get(username);
+        PhoneNumberModel phoneNumberModel = new PhoneNumberModel(username,user.getPhone());
+        return new ResponseEntity<>(phoneNumberModel,HttpStatus.OK);
     }
 
 }
