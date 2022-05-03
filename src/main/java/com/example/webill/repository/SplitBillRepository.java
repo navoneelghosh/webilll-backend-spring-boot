@@ -16,7 +16,7 @@ public interface SplitBillRepository extends JpaRepository<Bill_Split,Integer> {
             ") VALUES (\n" +
             ":billId, :usernameFrom,\n" +
             ":usernameTo, :amount,\n" +
-            "\"false\");", nativeQuery = true)
+            "\"false\")", nativeQuery = true)
     void addBillSplit(@Param("billId")int billId, @Param("usernameFrom")String usernameFrom,
                  @Param("usernameTo")String usernameTo, @Param("amount")double amount);
 
