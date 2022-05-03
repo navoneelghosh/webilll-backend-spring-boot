@@ -20,8 +20,8 @@ public class MapsService {
     @Autowired
     private Constants constants;
 
-    public List<Maps> getExpenseLocation(String username){
-        return mapsRepository.getExpenseLocation(username);
+    public List<Maps> getExpenseLocation(String username, String year){
+        return mapsRepository.getExpenseLocation(username,year);
     }
     
 }

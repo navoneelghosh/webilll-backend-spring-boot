@@ -22,7 +22,8 @@ public interface MapsRepository extends JpaRepository<Maps,Integer> {
             "FROM WeBillDB.bills as bp JOIN WeBillDB.bill_split bs \n" +
             "ON bp.billId = bs.billId\n" +
             "WHERE bs.usernameFrom = :username OR bs.usernameTo = :username \n" +
-            "group by bp.latitude, bp.longitude",nativeQuery = true)
-    List<Maps> getExpenseLocation(@Param("username")String username);
+            "group by bp.latitude, bp.longitude AND bp.date like :yearParam",nativeQuery = true)
+    List<Maps> getExpenseLocation(@Param("username")String username,
+                                  @Param("yearParam")String yearParam);
 
 }
